@@ -1,0 +1,103 @@
+<html>
+<head>
+    <title>Exercise 1 - Computer Networks 2023</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        #movingTitle {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: #0000ff;
+            white-space: nowrap;
+            animation: moveTitle 4s linear infinite;
+        }
+
+        #fixedTitle {
+            text-align: center;
+            color: #ff0000;
+            margin-top: 90px;
+        }
+
+        #imageContainer {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #imageContainer img {
+            width: 200px;
+            margin: 0 20px;
+        }
+
+        #links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        hr {
+            margin-top: 50px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input, textarea {
+            margin-bottom: 10px;
+        }
+
+        @keyframes moveTitle {
+            0%, 100% {
+                transform: translate(-50%, -50%);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(-20px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="movingTitle">Computer Networks 2023: Exercise 1</div>
+
+    <div id="fixedTitle">
+        <h2>Itay Tiomkin</h2>
+    </div>
+
+    <div id="imageContainer">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag-of-Israel-4-Zachi-Evenor.jpg" alt="Image 1">
+        <img src="https://www.ashops.co.il/Shops/shop_155/products/1092/picture_166.jpg" alt="Image 2">
+    </div>
+
+    <div id="links">
+        <a href="https://piazza.com/class/lq8bwborc233h1">Course Website</a> |
+        <a href="https://www.youtube.com/watch?v=HlBYdiXdUa8">A Favorite Website (video)</a>
+    </div>
+
+    <hr>
+
+    <form>
+        <label for="sender">Sender:</label>
+        <input type="text" id="sender" name="sender" required><br>
+
+        <label for="receiver">Receiver:</label>
+        <input type="text" id="receiver" name="receiver" required><br>
+
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required><br>
+
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" required></textarea><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>
