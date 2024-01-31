@@ -48,9 +48,9 @@ public class HttpResponse {
                     </body>
                     </html>""";
 
-    public static byte[] ResponseOk(String fileData)
+    public static byte[] ResponseOk(byte[] fileData)
     {
-        return createResponse(STATUS_OK, getCustomHtml(STATUS_OK, fileData));
+        return createResponse(STATUS_OK, fileData);
     }
 
     public static byte[] ResponseNotFound(String url)
@@ -91,32 +91,5 @@ public class HttpResponse {
         System.arraycopy(fileData,0,combined,headers.length,fileData.length);
 
         return combined;
-    }
-
-    private static byte[] readFile(File file)
-    {
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            byte[] bFile = new byte[(int)file.length()];
-
-            // read until the end of the stream.
-            while(fis.available() != 0)
-            {
-                fis.read(bFile, 0, bFile.length);
-            }
-
-            return bFile;
-        }
-        catch(FileNotFoundException e) {
-            // do something
-            int x = 1;
-        }
-        catch(IOException e)
-        {
-            // do something
-            int x = 3;
-        }
-
-        return null;
     }
 }
