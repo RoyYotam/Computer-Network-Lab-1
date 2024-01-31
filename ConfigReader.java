@@ -26,4 +26,9 @@ public class ConfigReader {
 
         return configMap;
     }
+
+    public String get(String key) {
+        Map configMap = new Map(<String, String>);
+        return configMap.get(key);
+    }
 }
