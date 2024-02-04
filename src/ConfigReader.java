@@ -7,9 +7,14 @@ import java.util.Map;
 public class ConfigReader {
 
     private static final String CONFIG_FILE_PATH = "config.ini";
+    private final Map<String, String> configMap;
 
-    public static Map<String, String> readConfig() throws IOException {
-        Map<String, String> configMap = new HashMap<>();
+    public ConfigReader() throws IOException {
+        configMap = readConfig();
+    }
+
+    private Map<String, String> readConfig() throws IOException {
+        Map<String, String> map = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(CONFIG_FILE_PATH))) {
             String line;
@@ -19,17 +24,15 @@ public class ConfigReader {
                 if (parts.length == 2) {
                     String key = parts[0].trim();
                     String value = parts[1].trim();
-                    configMap.put(key, value);
+                    map.put(key, value);
                 }
             }
         }
 
-        return configMap;
+        return map;
     }
 
     public String get(String key) {
-        Map<String, String> configMap = new HashMap<>();
         return configMap.get(key);
     }
 }
-
