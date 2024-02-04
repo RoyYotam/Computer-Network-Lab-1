@@ -4,14 +4,21 @@ public class Main {
     public static void main(String[] args) {
         try {
             ConfigReader configReader = new ConfigReader();
-            int port = configReader.get(port); 
-            String rootDirectory = configReader.get(root);
-            String defaultPage = configReader.get(defaultPage);
-            int maxThreads = configReader.get(maxThreads);
 
+            // Correctly retrieve configuration values with the appropriate data types
+            int port = Integer.parseInt(configReader.get("port"));
+            String rootDirectory = configReader.get("root");
+            String defaultPage = configReader.get("defaultPage");
+            int maxThreads = Integer.parseInt(configReader.get("maxThreads"));
+
+            // Initialize and start the server
             Server server = new Server(port, rootDirectory, defaultPage, maxThreads);
-            server.initializeServer();
+            server.startServer();
         } catch (IOException e) {
+            // Gracefully handle IOException
+            ExceptionHandler.handleException(e);
+        } catch (NumberFormatException e) {
+            // Handle the case where parsing integers fails
             ExceptionHandler.handleException(e);
         }
     }
