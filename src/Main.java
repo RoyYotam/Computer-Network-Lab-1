@@ -16,10 +16,10 @@ public class Main {
             server.startServer();
         } catch (IOException e) {
             // Gracefully handle IOException
-            ExceptionHandler.handleException(e);
+            e.printStackTrace();
         } catch (NumberFormatException e) {
             // Handle the case where parsing integers fails
-            ExceptionHandler.handleException(e);
+            e.printStackTrace();
         }
     }
 }
