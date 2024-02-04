@@ -28,7 +28,8 @@ public class ConfigReader {
     }
 
     public String get(String key) {
-        Map configMap = new Map(<String, String>);
+        Map<String, String> configMap = new HashMap<>();
         return configMap.get(key);
     }
 }
+
