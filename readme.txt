@@ -1,4 +1,4 @@
-The project is submitted by: Roy Yotam (id) and Itay Tiomkin (207828914)
+The project is submitted by: Roy Yotam (206378838) and Itay Tiomkin (207828914)
 
 A list of the classes implemented building the server:
 
@@ -16,7 +16,7 @@ A list of the classes implemented building the server:
 (3) ConfigReader - Reads and parses config.ini.
     Converts the file's data into a data structure, used to retrieve them for the server's initialization.
 
-(4) HTTPResponse - Handle the logic of Http responses.
+(4) HttpResponse - Handles the logic of Http responses.
     Responsible for returning Http responses when needed.
     Utilizes the seperate HttpResponseHelper class.
 
@@ -35,7 +35,24 @@ A list of the classes implemented building the server:
     Verifies that a requested page path is valid, and that requests methods are being supported.
     Dictates the supported image files types (".bmp", ".gif", ".png", ".jpg").
 
+(8) ConnectionHandler - a nested class, written in the file Server.java.
+    Handles the logic of the connection between the server and its clients (max. 10).
+    The class implements the interface 'Runnable' - allowing its instances to be executed as threads.
+
 
 An explanation about the design of the server implementation:
 
--
+We chose to implement the server using 7 java files, featuring overall 8 classes.
+The server itself is located in the Server.java file, while the file Main.java uses to build the server -
+based the values written in the file config.ini - and initialize it, given that the values in config.ini are valid.
+Http requests are being handled by 2 files:
+1. RequestHandler.java - interacts with the server file, getting Http requests from it and returning Http responses.
+2. HttpRequest.java - recieveing unhandled requests from RequestHandler.java and returning them handled. 
+   Http responses are being handled by 2 files:
+1. HttpResponse.java - Processes an Http request and builds a Http response object.
+2. HttpResponseHelper - Generates an Http response using the Http response object, 
+   corresponding to the Http request processed by HttpResponse.java, and transmits it to RequestHandler.java.
+The file ConfigReader.java is used to parse and process the values written config.ini, for the Main.java file to use them
+while building the server - as well as for the RequestHandler.java file to use them while handling client's requests.
+
+A clear demonstration of the intercation between the server classes can be found in the attached "Server_Chart.png" file.
