@@ -15,9 +15,6 @@ A list of the classes implemented building the server:
 (4) ConfigReader - Reads and parses config.ini.
     Converts the file's data into a data structure, used to retrieve them for the server's initialization.
 
-(5) FaviconHandler - Handles the logic involving the file Favicon.ico.
-    Responsible for handling and responding to Favicon.ico requests.
-
 
 An explanation about the design of the server implementation:
 

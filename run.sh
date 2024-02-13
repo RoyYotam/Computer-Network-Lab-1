@@ -1,2 +1,3 @@
-#!/bin/bash
-java -cp src Main
+#/bin/bash
+
+java -cp ./src/src Main

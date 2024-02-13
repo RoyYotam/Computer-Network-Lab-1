@@ -1,2 +1,3 @@
-#!/bin/bash
-javac -d src *.java
+#/bin/bash
+
+javac -d ./src ./src/Main.java
