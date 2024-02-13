@@ -1,3 +1,3 @@
 #/bin/bash
 
-javac -d ./src ./src/Main.java
+javac -d ./out ./Main.java
