@@ -3,7 +3,10 @@ import java.nio.charset.StandardCharsets;
 public class HttpResponseHelper {
 
     // Constants
-    private static final String CONTENT_TYPE_HTML = "text/html";
+    public static final String CONTENT_TYPE_HTML = "text/html";
+    public static final String CONTENT_TYPE_IMAGE = "image";
+    public static final String CONTENT_TYPE_ICON = "icon";
+    public static final String CONTENT_TYPE_OTHER = "application/octet-stream";
 
     // Response codes
     // 2xx: Success
@@ -41,9 +44,9 @@ public class HttpResponseHelper {
                     </body>
                     </html>""";
 
-    public static HttpResponse ResponseOk(byte[] fileData)
+    public static HttpResponse ResponseOk(byte[] fileData, String contentType)
     {
-        return createResponse(STATUS_OK, CONTENT_TYPE_HTML, fileData);
+        return createResponse(STATUS_OK, contentType, fileData);
     }
 
     public static HttpResponse ResponseNotFound(String url)

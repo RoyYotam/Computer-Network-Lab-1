@@ -65,7 +65,7 @@ class ConnectionHandler implements Runnable {
 
         while(this.IsAlive) {
             try {
-                String request = recvAllPacket();
+                String request = recvWholePacket();
                 outputStream.write(RequestHandler.HandleClientRequest(request));
             } catch (Exception e) {
                 // closed
@@ -75,25 +75,13 @@ class ConnectionHandler implements Runnable {
     }
 
     private static final String CRLF = "\r\n";
-    private String recvAllPacket() throws IOException {
 
-        StringBuilder request = new StringBuilder();
-        boolean doneReading = false;
+    private String recvWholePacket() throws IOException {
+        final int recvLength = 1024;
 
-        while (!doneReading)
-        {
-            String line = reader.readLine();
+        char[] messageChars = new char[recvLength];
+        int totalCharsRead = reader.read(messageChars);
 
-            if (line == null || line.equals(""))
-            {
-                doneReading = true;
-            }
-            else
-            {
-                request.append(line).append(CRLF);
-            }
-        }
-
-        return request.toString();
+        return new String(messageChars, 0, totalCharsRead);
     }
 }

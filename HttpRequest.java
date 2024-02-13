@@ -15,6 +15,7 @@ public class HttpRequest {
     private static final String SEPERATOR_BETWEEN_FILE_PATH_AND_PARAMS = "\\?";
     private static final String SEPERATOR_BETWEEN_PARAMS = "&";
     private static final String SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE = "=";
+    private static final String SEPERATOR_BETWEEN_HEADERS = "\r\n";
 
 
     private final Hashtable<String, String> params = new Hashtable<String, String>();
@@ -35,7 +36,6 @@ public class HttpRequest {
         return mainFolderLocation + requestedPage;
     }
 
-    //TODO this
     private String referer;
     private String userAgent;
 
@@ -90,6 +90,25 @@ public class HttpRequest {
         return isImage;
     }
 
+    private String iconEnd = ".ico";
+    public boolean IsIcon()
+    {
+        return requestedPage.endsWith(iconEnd);
+    }
+
+    private String htmlEnd = ".html";
+    public boolean IsHtml()
+    {
+        return requestedPage.endsWith(htmlEnd);
+    }
+
+    // Original request
+    private String originalString;
+    public String OriginalString()
+    {
+        return originalString;
+    }
+
     // default for file path
     private final String defaultPage;
     private final String defaultRoot;
@@ -100,12 +119,15 @@ public class HttpRequest {
     {
         this.defaultPage = defaultPage;
         this.defaultRoot = defaultRoot;
+        this.originalString = httpRequest;
 
-        String[] splitRequest = httpRequest.split(SEPERATOR_BETWEEN_REQUEST_PARTS);
+        String[] headers = httpRequest.split(SEPERATOR_BETWEEN_HEADERS);
+        String[] splitRequest = headers[0].split(SEPERATOR_BETWEEN_REQUEST_PARTS);
 
         updateMethod(splitRequest[0]);
         updateParams(splitRequest[1]);
         updateFileNameAndPath(splitRequest[1]);
+        updateHeaders(headers);
     }
 
     private void updateMethod(String splitRequestMethod)
@@ -152,17 +174,35 @@ public class HttpRequest {
         if (isDefaultPage(splitRequest[0]))
         {
             requestedPage = defaultRoot + defaultPage;
-        } else if (splitRequest[0].startsWith("./")) {
-            requestedPage =  splitRequest[0];
+        } else if (!splitRequest[0].startsWith(defaultRoot)) {
+            requestedPage = defaultRoot + splitRequest[0].substring(1);
         } else
         {
-            requestedPage =  splitRequest[0];
+            requestedPage = splitRequest[0];
         }
     }
 
     private static boolean isDefaultPage(String httpRequestPageUrl)
     {
         return SEPERATOR_IN_FILE_PATH.equals(httpRequestPageUrl);
+    }
+
+    private final String REFERER = "Referer: ";
+    private final String USER_AGENT = "User-Agent: ";
+    private void updateHeaders(String[] headers)
+    {
+        for (String header: headers)
+        {
+            if (header.startsWith(REFERER))
+            {
+                referer = header.substring(REFERER.length());
+            }
+
+            if (header.startsWith(USER_AGENT))
+            {
+                userAgent = header.substring(USER_AGENT.length());
+            }
+        }
     }
 
     public enum HttpMethod
