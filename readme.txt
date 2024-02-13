@@ -17,7 +17,7 @@ A list of the classes implemented building the server:
     Converts the file's data into a data structure, used to retrieve them for the server's initialization.
 
 (4) HttpResponse - Handles the logic of Http responses.
-    Responsible for returning Http responses when needed.
+    Responsible for returning Http responses when needed.ֿ
     Utilizes the seperate HttpResponseHelper class.
 
 (5) HttpResponseHelper - Generates Http responses for the HTTPResponse class to return.
@@ -27,6 +27,7 @@ A list of the classes implemented building the server:
 (6) RequestHandler - Handles the logic of Http requests.
     Generates Http responses to the handled requests.
     Prints Http requests and responses when needed. 
+    Handles requests related to the file "Favicon.ico", among others.
     Utilizes the seperate HttpRequest class.
 
 (7) HttpRequest - Parses the requests managed by RequestHandler.
