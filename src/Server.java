@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class Server {
     private final int port;
@@ -19,24 +20,24 @@ public class Server {
         server.startServer();
     }
 
-     public void startServer() {
-         try {
-             ServerSocket serverSocket = new ServerSocket(port);
-             System.out.println("Server listening on port " + port);
+    public void startServer() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(port);
+            System.out.println("Server listening on port " + port);
 
-             while (true)
-             {
-                 Socket clientSocket = serverSocket.accept();
-                 // Create a new thread to handle the client request
-                 Thread thread = new Thread(new ConnectionHandler(clientSocket));
-                 // TODO::: THREADPOOL as shown in class
-                 thread.start();
-             }
-         }
-         catch (IOException e)
-         {
-             System.out.println("Something went wrong!");
-         }
+            while (true)
+            {
+                Socket clientSocket = serverSocket.accept();
+                // Create a new thread to handle the client request
+                Thread thread = new Thread(new ConnectionHandler(clientSocket));
+                // TODO::: THREADPOOL as shown in class
+                thread.start();
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println("Something went wrong!");
+        }
     }
 }
 
@@ -61,12 +62,21 @@ class ConnectionHandler implements Runnable {
 
         while(this.IsAlive) {
             try {
-                String request = reader.readLine();
+                String request = recvAllPacket();
                 outputStream.write(RequestHandler.HandleClientRequest(request));
             } catch (Exception e) {
                 // closed
                 this.IsAlive = false;
             }
         }
+    }
+
+    private String recvAllPacket() throws IOException {
+        final int recvLength = 1024;
+
+        char[] messageChars = new char[recvLength];
+        int totalCharsRead = reader.read(messageChars);
+
+        return new String(messageChars, 0, totalCharsRead);
     }
 }

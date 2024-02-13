@@ -12,7 +12,7 @@ public class HttpRequest {
 
     private static final String SEPERATOR_BETWEEN_REQUEST_PARTS = " ";
     private static final String SEPERATOR_IN_FILE_PATH = "/";
-    private static final String SEPERATOR_BETWEEN_FILE_PATH_AND_PARAMS = "/?";
+    private static final String SEPERATOR_BETWEEN_FILE_PATH_AND_PARAMS = "\\?";
     private static final String SEPERATOR_BETWEEN_PARAMS = "&";
     private static final String SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE = "=";
 
