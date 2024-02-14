@@ -46,10 +46,22 @@ class HttpResponse {
 
             chunkedResponse[0] = headers;
 
+            int sizeInChunkI = 0;
             for(int i = 0; i < content.length; i += chunkLength)
             {
-                int sizeInChunkI = (i + chunkLength > content.length) ? content.length - i : chunkLength;
+                sizeInChunkI = (i + chunkLength > content.length) ? content.length - i : chunkLength;
                 System.arraycopy(content, i, chunkedResponse[(i / chunkLength) + 1], 0, sizeInChunkI);
+            }
+
+            // Fill the space with \r\n
+            if (sizeInChunkI != chunkLength && content.length > 0)
+            {
+                byte[] crlf = {0x0d, 0x0a};
+                for (int i = sizeInChunkI; i < chunkLength - 1; i ++)
+                {
+                    chunkedResponse[chunkedResponse.length - 1][i] = crlf[0];
+                }
+                chunkedResponse[chunkedResponse.length - 1][chunkedResponse[chunkedResponse.length - 1].length - 1] = crlf[1];
             }
         }
         else
