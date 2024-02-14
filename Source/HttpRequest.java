@@ -48,12 +48,13 @@ public class HttpRequest {
     }
 
     private String requestedPage;
+    private boolean startsWithBackSlash;
     private final String mainFolderLocation = ".";
     // We will add the '.' to the path start since the folder is
     // referred to the current folder.
     public String RequestedPage()
     {
-        return mainFolderLocation + requestedPage;
+        return ((startsWithBackSlash) ? mainFolderLocation : "") + requestedPage;
     }
 
     private String referer;
@@ -80,10 +81,9 @@ public class HttpRequest {
         }
 
         // Starts with /
-        if (requestedPage.charAt(0) != '/')
+        if (requestedPage.charAt(0) == '/')
         {
-            return false;
-            // todo check tilda!
+            startsWithBackSlash = true;
         }
 
         // Checks that path is real path and not directory
