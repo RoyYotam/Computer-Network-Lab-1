@@ -19,6 +19,24 @@ public class HttpRequest {
 
 
     private final Hashtable<String, String> params = new Hashtable<String, String>();
+    public String paramsAsString()
+    {
+        StringBuilder result = new StringBuilder();
+
+        for (String key: params.keySet())
+        {
+            result.append(
+                            "::::: <br>" +
+                            "Param : <span style='color:red;'>" + key + "</span><br>" +
+                            "Value : <span style='color:blue;'>" + params.get(key) + "</span><br>" +
+                            "::::: <br>" +
+                            "<br>");
+        }
+
+        return result.toString();
+    }
+    // Content-Length is the length of the content in the request -> parameters.
+    private int contentLength;
     // In order to create read-only non-constant fields, I will use
     // private and below an 'get' function.
     private HttpMethod method;
@@ -47,6 +65,12 @@ public class HttpRequest {
 
     public boolean IsPathValid()
     {
+        // params_info.html page
+        if (requestedPage.endsWith("/params_info.html"))
+        {
+            isParamsInfo = true;
+            return true;
+        }
         // Does not contain invalid strings
         if (requestedPage.contains("//") || requestedPage.contains("'/../"))
         {
@@ -57,6 +81,7 @@ public class HttpRequest {
         if (requestedPage.charAt(0) != '/')
         {
             return false;
+            // todo check tilda!
         }
 
         // Checks that path is real path and not directory
@@ -102,6 +127,17 @@ public class HttpRequest {
         return requestedPage.endsWith(htmlEnd);
     }
 
+    private boolean isChunk;
+    public boolean IsChunk()
+    {
+        return isChunk;
+    }
+
+    private boolean isParamsInfo;
+    public boolean IsParamsInfo()
+    {
+        return isParamsInfo;
+    }
     // Original request
     private String originalString;
     public String OriginalString()
@@ -128,6 +164,7 @@ public class HttpRequest {
         updateParams(splitRequest[1]);
         updateFileNameAndPath(splitRequest[1]);
         updateHeaders(headers);
+        updateParamsFromHeaders(httpRequest);
     }
 
     private void updateMethod(String splitRequestMethod)
@@ -164,6 +201,22 @@ public class HttpRequest {
         }
     }
 
+    private void updateParamsFromHeaders(String request) {
+        String paramsString = request.substring(request.length() - contentLength);
+        String[] paramNameAndValuePairsAsStrings = paramsString.split(SEPERATOR_BETWEEN_PARAMS);
+
+        for (String singleParamNameAndValuePair : paramNameAndValuePairsAsStrings) {
+            String[] paramNameAndValue = singleParamNameAndValuePair.split(SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE);
+
+            if (paramNameAndValue.length > 1) {
+                if (!params.contains(paramNameAndValue[0])) {
+                    params.put(paramNameAndValue[0], paramNameAndValue[1]);
+                }
+            }
+        }
+
+    }
+
     private void updateFileNameAndPath(String splitRequestPageUrlAndParams) {
         /*
             A function gets request from the client and return the file name in the request.
@@ -189,6 +242,8 @@ public class HttpRequest {
 
     private final String REFERER = "Referer: ";
     private final String USER_AGENT = "User-Agent: ";
+    private final String CHUNKED = "chunked: yes";
+    private final String CONTENT_LENGTH = "Content-Length: ";
     private void updateHeaders(String[] headers)
     {
         for (String header: headers)
@@ -201,6 +256,22 @@ public class HttpRequest {
             if (header.startsWith(USER_AGENT))
             {
                 userAgent = header.substring(USER_AGENT.length());
+            }
+
+            if (header.startsWith(CHUNKED))
+            {
+                isChunk = true;
+            }
+
+            if (header.startsWith(CONTENT_LENGTH))
+            {
+                String contentLengthAsString = header.substring(CONTENT_LENGTH.length());
+
+                try {
+                    contentLength =  Integer.parseInt(contentLengthAsString);
+                } catch(NumberFormatException ex) {
+                    contentLength = 0;
+                }
             }
         }
     }

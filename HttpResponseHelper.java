@@ -44,29 +44,29 @@ public class HttpResponseHelper {
                     </body>
                     </html>""";
 
-    public static HttpResponse ResponseOk(byte[] fileData, String contentType)
+    public static HttpResponse ResponseOk(byte[] fileData, String contentType, boolean chunked)
     {
-        return createResponse(STATUS_OK, contentType, fileData);
+        return createResponse(STATUS_OK, contentType, fileData, chunked);
     }
 
-    public static HttpResponse ResponseNotFound(String url)
+    public static HttpResponse ResponseNotFound(String url, boolean chunked)
     {
-        return createResponse(STATUS_NOT_FOUND, CONTENT_TYPE_HTML, getCustomHtml(STATUS_NOT_FOUND, String.format(NOT_FOUND_MESSAGE, url)));
+        return createResponse(STATUS_NOT_FOUND, CONTENT_TYPE_HTML, getCustomHtml(STATUS_NOT_FOUND, String.format(NOT_FOUND_MESSAGE, url)), chunked);
     }
 
     public static HttpResponse ResponseBadRequest()
     {
-        return createResponse(STATUS_BAD_REQUEST, CONTENT_TYPE_HTML, getCustomHtml(STATUS_BAD_REQUEST, BAD_REQUEST_MESSAGE));
+        return createResponse(STATUS_BAD_REQUEST, CONTENT_TYPE_HTML, getCustomHtml(STATUS_BAD_REQUEST, BAD_REQUEST_MESSAGE), false);
     }
 
-    public static HttpResponse ResponseNotImplemented()
+    public static HttpResponse ResponseNotImplemented(boolean chunked)
     {
-        return createResponse(STATUS_NOT_IMPLEMENTED, CONTENT_TYPE_HTML, getCustomHtml(STATUS_NOT_IMPLEMENTED, NOT_IMPLEMENTED_MESSAGE));
+        return createResponse(STATUS_NOT_IMPLEMENTED, CONTENT_TYPE_HTML, getCustomHtml(STATUS_NOT_IMPLEMENTED, NOT_IMPLEMENTED_MESSAGE), chunked);
     }
 
     public static HttpResponse ResponseInternalServerError()
     {
-        return createResponse(STATUS_INTERNAL_SERVER_ERROR, CONTENT_TYPE_HTML, getCustomHtml(STATUS_INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE));
+        return createResponse(STATUS_INTERNAL_SERVER_ERROR, CONTENT_TYPE_HTML, getCustomHtml(STATUS_INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE), false);
     }
 
     private static byte[] getCustomHtml(String status, String message)
@@ -74,8 +74,14 @@ public class HttpResponseHelper {
         return String.format(DEFAULT_HTML_RESPONSE, status, status, message).getBytes(StandardCharsets.UTF_8);
     }
 
-    private static HttpResponse createResponse(String status_code, String contentType, byte[] fileData)
+    private static HttpResponse createResponse(String status_code, String contentType, byte[] fileData, boolean chunked)
     {
-        return new HttpResponse(status_code, contentType, fileData);
+        return new HttpResponse(status_code, contentType, fileData, chunked);
+    }
+
+    public static byte[] GenerateParamsInfo(String paramsString)
+    {
+        String paramsInfoTitle = "Params Info!";
+        return String.format(DEFAULT_HTML_RESPONSE, paramsInfoTitle, paramsInfoTitle, paramsString).getBytes(StandardCharsets.UTF_8);
     }
 }

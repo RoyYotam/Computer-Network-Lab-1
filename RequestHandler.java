@@ -23,7 +23,7 @@ public class RequestHandler {
 
      */
 
-    public static byte[] HandleClientRequest(String httpRequest) {
+    public static byte[][] HandleClientRequest(String httpRequest) {
         printRequest(httpRequest);
 
         String defaultPage;
@@ -75,7 +75,7 @@ public class RequestHandler {
         return bFile;
     }
 
-    private static byte[] printHeadersAndReturnResponseByteArray(HttpResponse response)
+    private static byte[][] printHeadersAndReturnResponseByteArray(HttpResponse response)
     {
         printResponse(new String(response.GetHeaders(), StandardCharsets.UTF_8));
         return response.GetResponseByteArray();
@@ -101,11 +101,11 @@ public class RequestHandler {
         }
     }
 
-    private static byte[] handleMethod(HttpRequest request)
+    private static byte[][] handleMethod(HttpRequest request)
     {
         if (!request.IsMethodSupported())
         {
-            return printHeadersAndReturnResponseByteArray(HttpResponseHelper.ResponseNotImplemented());
+            return printHeadersAndReturnResponseByteArray(HttpResponseHelper.ResponseNotImplemented(request.IsChunk()));
         }
         else
         {
@@ -119,12 +119,12 @@ public class RequestHandler {
                 {
                     HttpResponse response = getResponseFromParsedRequest(request);
                     printResponse(new String(response.GetHeaders(), StandardCharsets.UTF_8));
-                    return response.GetHeaders();
+                    return new byte[][]{response.GetHeaders()};
                 }
                 case TRACE ->
                 {
                     final String STATUS_OK = "200 OK";
-                    HttpResponse response = new HttpResponse(STATUS_OK, HttpResponseHelper.CONTENT_TYPE_OTHER, request.OriginalString().getBytes(StandardCharsets.UTF_8));
+                    HttpResponse response = new HttpResponse(STATUS_OK, HttpResponseHelper.CONTENT_TYPE_OTHER, request.OriginalString().getBytes(StandardCharsets.UTF_8), request.IsChunk());
                     return printHeadersAndReturnResponseByteArray(response);
                 }
             }
@@ -140,18 +140,25 @@ public class RequestHandler {
 
         if (!request.IsPathValid())
         {
-            return HttpResponseHelper.ResponseNotFound(request.RequestedPage());
+            return HttpResponseHelper.ResponseNotFound(request.RequestedPage(), request.IsChunk());
         }
 
         try
         {
-            fileData = readFile(new File(request.RequestedPage()));
+            if (request.IsParamsInfo())
+            {
+                fileData = HttpResponseHelper.GenerateParamsInfo(request.paramsAsString());
+            }
+            else
+            {
+                fileData = readFile(new File(request.RequestedPage()));
+            }
         }
         catch(IOException e)
         {
             return HttpResponseHelper.ResponseInternalServerError();
         }
 
-        return HttpResponseHelper.ResponseOk(fileData, getContentType(request));
+        return HttpResponseHelper.ResponseOk(fileData, getContentType(request), request.IsChunk());
     }
 }
