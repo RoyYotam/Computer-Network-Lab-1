@@ -37,6 +37,11 @@ public class RequestHandler {
 
         HttpRequest clientRequest = new HttpRequest(httpRequest, defaultPage, defaultRoot);
 
+        if (clientRequest.IsBadRequest())
+        {
+            return printHeadersAndReturnResponseByteArray(HttpResponseHelper.ResponseBadRequest());
+        }
+
         return handleMethod(clientRequest);
     }
 

@@ -151,6 +151,13 @@ public class HttpRequest {
     private final String defaultPage;
     private final String defaultRoot;
 
+    // Flag for bad request
+    private boolean isBadRequest;
+    public boolean IsBadRequest()
+    {
+        return isBadRequest;
+    }
+
     // Constructor
 
     public HttpRequest(String httpRequest, String defaultPage, String defaultRoot)
@@ -160,13 +167,22 @@ public class HttpRequest {
         this.originalString = httpRequest;
 
         String[] headers = httpRequest.split(SEPERATOR_BETWEEN_HEADERS);
-        String[] splitRequest = headers[0].split(SEPERATOR_BETWEEN_REQUEST_PARTS);
+        String requestFirstLine = headers[0];
+        requestFirstLine = requestFirstLine.trim().replaceAll(" +", " ");
+        String[] splitRequest = requestFirstLine.split(SEPERATOR_BETWEEN_REQUEST_PARTS);
 
-        updateMethod(splitRequest[0]);
-        updateParams(splitRequest[1]);
-        updateFileNameAndPath(splitRequest[1]);
-        updateHeaders(headers);
-        updateParamsFromHeaders(httpRequest);
+        if (splitRequest.length < 3)
+        {
+            isBadRequest = true;
+        }
+        else
+        {
+            updateMethod(splitRequest[0]);
+            updateParams(splitRequest[1]);
+            updateFileNameAndPath(splitRequest[1]);
+            updateHeaders(headers);
+            updateParamsFromHeaders(httpRequest);
+        }
     }
 
     private void updateMethod(String splitRequestMethod)
@@ -208,15 +224,22 @@ public class HttpRequest {
                     }
                 }
             }
+            else
+            {
+                isBadRequest = true;
+            }
         }
     }
 
     private void updateParamsFromHeaders(String request) {
-        String paramsString = request.substring(request.length() - contentLength);
-        String[] paramNameAndValuePairsAsStrings = paramsString.split(SEPERATOR_BETWEEN_PARAMS);
+        if (contentLength != 0)
+        {
+            String requestWithoutExtraSpaces = request.trim().replaceAll(" +", " ");
+            String paramsString = requestWithoutExtraSpaces.substring(requestWithoutExtraSpaces.length() - contentLength);
+            String[] paramNameAndValuePairsAsStrings = paramsString.split(SEPERATOR_BETWEEN_PARAMS);
 
-        updateParamsFromPairs(paramNameAndValuePairsAsStrings);
-
+            updateParamsFromPairs(paramNameAndValuePairsAsStrings);
+        }
     }
 
     private void updateFileNameAndPath(String splitRequestPageUrlAndParams) {
