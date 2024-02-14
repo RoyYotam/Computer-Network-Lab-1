@@ -252,12 +252,35 @@ public class HttpRequest {
         if (isDefaultPage(splitRequest[0]))
         {
             requestedPage = defaultRoot + defaultPage;
-        } else if (!splitRequest[0].startsWith(defaultRoot)) {
-            requestedPage = defaultRoot + splitRequest[0].substring(1);
-        } else
+        } else if (countChar(splitRequest[0], SEPERATOR_IN_FILE_PATH) <= 1) {
+            if (countChar(splitRequest[0], SEPERATOR_IN_FILE_PATH) == 0)
+            {
+                isBadRequest = true;
+            }
+            else
+            {
+                requestedPage = defaultRoot + splitRequest[0].substring(1);
+            }
+        }
+        else
         {
             requestedPage = splitRequest[0];
         }
+    }
+
+    public int countChar(String str, String c)
+    {
+        int count = 0;
+
+        for(int i = 0; i < str.length(); i++)
+        {
+            if(str.charAt(i) == c.charAt(0))
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private static boolean isDefaultPage(String httpRequestPageUrl)
