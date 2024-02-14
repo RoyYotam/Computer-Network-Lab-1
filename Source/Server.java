@@ -76,7 +76,7 @@ class ConnectionHandler implements Runnable {
     }
 
     private String recvWholePacket() throws IOException {
-        final int recvLength = 1024;
+        final int recvLength = 4096;
 
         char[] messageChars = new char[recvLength];
         int totalCharsRead = reader.read(messageChars);
