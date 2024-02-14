@@ -1,3 +1,5 @@
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -186,15 +188,23 @@ public class HttpRequest {
         {
             String[] paramNameAndValuePairsAsStrings = splitRequest[1].split(SEPERATOR_BETWEEN_PARAMS);
 
-            for (String singleParamNameAndValuePair : paramNameAndValuePairsAsStrings)
-            {
-                String[] paramNameAndValue = singleParamNameAndValuePair.split(SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE);
+            updateParamsFromPairs(paramNameAndValuePairsAsStrings);
+        }
+    }
 
-                if (paramNameAndValue.length > 1)
+    private void updateParamsFromPairs(String[] paramNameAndValuePairsAsStrings) {
+        for (String singleParamNameAndValuePair : paramNameAndValuePairsAsStrings)
+        {
+            String[] paramNameAndValue = singleParamNameAndValuePair.split(SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE);
+
+            if (paramNameAndValue.length > 1)
+            {
+                if (!params.contains(paramNameAndValue[0]))
                 {
-                    if (!params.contains(paramNameAndValue[0]))
-                    {
-                        params.put(paramNameAndValue[0], paramNameAndValue[1]);
+                    try {
+                        params.put(paramNameAndValue[0], URLDecoder.decode(paramNameAndValue[1], "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        // don't add it because it corrupted
                     }
                 }
             }
@@ -205,15 +215,7 @@ public class HttpRequest {
         String paramsString = request.substring(request.length() - contentLength);
         String[] paramNameAndValuePairsAsStrings = paramsString.split(SEPERATOR_BETWEEN_PARAMS);
 
-        for (String singleParamNameAndValuePair : paramNameAndValuePairsAsStrings) {
-            String[] paramNameAndValue = singleParamNameAndValuePair.split(SEPERATOR_BETWEEN_PARAM_NAME_AND_VALUE);
-
-            if (paramNameAndValue.length > 1) {
-                if (!params.contains(paramNameAndValue[0])) {
-                    params.put(paramNameAndValue[0], paramNameAndValue[1]);
-                }
-            }
-        }
+        updateParamsFromPairs(paramNameAndValuePairsAsStrings);
 
     }
 
